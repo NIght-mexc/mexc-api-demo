@@ -42,10 +42,10 @@ public class SignatureUtil {
     }
 
     /**
-     * 使用标准URL Encode编码。注意和JDK默认的不同，空格被编码为%20而不是+。
+     * Standard URL encoding. Note the difference from JDK default: spaces are encoded as %20 instead of +.
      *
-     * @param s String字符串
-     * @return URL编码后的字符串
+     * @param s String to encode
+     * @return URL encoded string
      */
     public static String urlEncode(String s) {
         try {
@@ -56,8 +56,10 @@ public class SignatureUtil {
     }
 
     public static String toQueryString(Map<String, String> params) {
-        return params.entrySet().stream().map((entry) -> entry.getKey() + "=" + urlEncode(entry.getValue())).collect(Collectors.joining("&"));
+        return params.entrySet().stream().map((entry) -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.joining("&"));
     }
 
-
+    public static String toQueryStringWithEncoding(Map<String, String> params) {
+        return params.entrySet().stream().map((entry) -> entry.getKey() + "=" + urlEncode(entry.getValue())).collect(Collectors.joining("&"));
+    }
 }

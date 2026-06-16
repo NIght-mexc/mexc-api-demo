@@ -1,8 +1,8 @@
 package config
 
 const (
-	API_KEY         string = "apikey"
-	SEC_KEY         string = "secret key"
-	BASE_URL        string = "https://api.mexc.com/api/v3"
+	API_KEY          string = ""
+	SEC_KEY          string = ""
+	BASE_URL         string = "https://api.mexc.com/api/v3"
 	FUTURES_BASE_URL string = "https://api.mexc.com"
 )

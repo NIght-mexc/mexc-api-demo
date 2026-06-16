@@ -16,7 +16,7 @@ Description:
     2. same as how to call Public api in next
 
 ## Futures API
-* REST endpoints are in `futures/futuresList.go`
+* REST SDK is in `futures/mexcfutures/` (see `futures/README.md` and `futures/cmd/testrest`)
 * Public market endpoints do not require signing
 * Private endpoints use Futures header signing (`ApiKey`, `Request-Time`, `Signature`)
 * Example:
