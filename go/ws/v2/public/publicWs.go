@@ -11,8 +11,8 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var addr = "wbs.mexc.com"
-var payload = `{"symbol":"MX_USDT","op":"sub.symbol"}`
+var addr = "wbs-api.mexc.com"
+var payload = `{"method":"SUBSCRIPTION","params":["spot@public.aggre.deals.v3.api.pb@100ms@BTCUSDT"]}`
 
 func main() {
 	flag.Parse()

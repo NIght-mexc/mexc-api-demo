@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-var addr = "wbs.mexc.com"
+var addr = "wbs-api.mexc.com"
 var listenKey = "b93a4d29dc50a5e22270b3858acc8478ebbccf2ce2564f54281fb802d03eb4"
 
 // 订阅频道

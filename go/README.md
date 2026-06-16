@@ -1,38 +1,40 @@
-<!-- # api-demo
-## v3 现货 api的调用
-说明：
-* **公共接口**
-    1. 进入run demo中，无参数的请求直接调用:在终端中输入指令“go run *.go”. *是想要请求的文件名，例如：go run Kline.go
-    2. 带参数的请求需要在params中输入json格式的参数 如：
-    `{"symbol":"BTCUSDT",	"limit":"200"}`
-* **私有接口**
-    1. 需要先在config.go中配置相关的api_key和sec_key
-    2. 后续操作与公共接口相同
-
-## 现货ws的调用
-**说明：**
-1. 进入publicws.go,在payload参数中输入相应的json格式的request payload
-2. 私有频道用privateWs.go进行订阅 -->
 # API-Demo
+
 ## V3 Spot API
 Description:
 * **Public API**
-    1. access to file:run demo，select a function you want to call in spotList.go. eg:
-       > `demo/Market Data/Kline.go`
+    1. access to file: `run demo`，select a function you want to call in `spot/spotList.go`. eg:
+       > `run demo/Market Data/Kline.go`
     2. input the params in json format if this request need any params,like：
-       > var params string = `{"symbol":"BTCUSDT","limit":"200"}`  
+       > `var params string = \`{"symbol":"BTCUSDT","limit":"200"}\``  
     3. if no params needed, just write 
        > `var params string =""`
     4. run the request with code 
        > `go run Kline.go`
 * **Private API**
-    1. input the `api_key` and `sec_key` in config.go first
+    1. input the `api_key` and `sec_key` in `config/config.go` first
     2. same as how to call Public api in next
 
+## Futures API
+* REST endpoints are in `futures/futuresList.go`
+* Public market endpoints do not require signing
+* Private endpoints use Futures header signing (`ApiKey`, `Request-Time`, `Signature`)
+* Example:
+    > `go run "run demo/Futures/Market/ContractPing.go"`
+
+## Broker API
+* REST endpoints are in `broker/brokerList.go`
+* Example:
+    > `go run "run demo/Broker/Endpoints/QuerySubAccountList.go"`
+
+## P2P API
+* REST endpoints are in `p2p/p2pList.go`
+* Example:
+    > `go run "run demo/P2P/Account/GetOrderDetail.go"`
+
 ## WebSocket For Spot
-**Description:：**
-1. access to publicws.go,input request payload in `payload` (json format).eg:
-    > `{"symbol":"MX_USDT","op":"sub.symbol"}`
-2. subscribe the private information by `privateWs.go`
+**Description:**
+1. Spot **v3** market streams demo: `ws/v2/public/publicWs.go` — note: `v2` here is the **repository directory name only**, not the WebSocket protocol version; the example uses the v3 endpoint `wss://wbs-api.mexc.com/ws` and v3 `SUBSCRIPTION` messages per api-docs.
+2. User data stream: `ws/v3/Ws.go` (requires listenKey from REST API; v3 user stream protocol)
 3. run the request with code 
-    > `go run publicws.go`
+    > `go run publicWs.go`

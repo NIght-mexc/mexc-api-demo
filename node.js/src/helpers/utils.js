@@ -32,6 +32,23 @@ const buildQueryString = params => {
     .join('&');
 };
 
+const substitutePathParams = (path, params = {}) => {
+  const remaining = { ...params }
+  const resolvedPath = path.replace(/\{(\w+)\}/g, (_, key) => {
+    const value = remaining[key]
+    delete remaining[key]
+    return value !== undefined ? value : `{${key}}`
+  })
+  return { path: resolvedPath, params: remaining }
+}
+
+const buildSortedQueryString = params => {
+  if (!params) return ''
+  return Object.keys(params)
+    .sort()
+    .map(key => `${key}=${params[key]}`)
+    .join('&')
+}
 
 const getRequestInstance = (config) => {
   return axios.create({
@@ -40,16 +57,33 @@ const getRequestInstance = (config) => {
 }
 
 const createRequest = (config) => {
-  const { baseURL, apiKey, method, url } = config
+  const { baseURL, apiKey, method, url, headers, data } = config
   return getRequestInstance({
     baseURL,
     headers: {
       'Content-Type': 'application/json',
       'X-MEXC-APIKEY': apiKey,
+      ...headers
     }
   }).request({
     method,
-    url
+    url,
+    data
+  })
+}
+
+const createFuturesRequest = (config) => {
+  const { baseURL, method, url, headers, data } = config
+  return getRequestInstance({
+    baseURL,
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers
+    }
+  }).request({
+    method,
+    url,
+    data
   })
 }
 
@@ -68,7 +102,10 @@ module.exports = {
   isEmptyValue,
   removeEmptyValue,
   buildQueryString,
+  buildSortedQueryString,
+  substitutePathParams,
   createRequest,
+  createFuturesRequest,
   flowRight,
   defaultLogger
 }

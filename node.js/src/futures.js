@@ -1,8 +1,8 @@
 const APIBase = require('./APIbase')
-const { Spot: SpotModule } = require('./modules')
+const { Futures: FuturesModule } = require('./modules')
 const { flowRight } = require('./helpers/utils')
 
-class Spot extends flowRight(SpotModule)(APIBase) {
+class Futures extends flowRight(FuturesModule)(APIBase) {
   constructor (apiKey = '', apiSecret = '', options = {}) {
     options.baseURL = options.baseURL || 'https://api.mexc.com'
     super({
@@ -13,4 +13,4 @@ class Spot extends flowRight(SpotModule)(APIBase) {
   }
 }
 
-module.exports = Spot
+module.exports = Futures

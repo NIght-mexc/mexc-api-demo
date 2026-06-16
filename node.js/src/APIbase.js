@@ -1,6 +1,5 @@
 const CryptoJS = require('crypto-js')
-const HmacSHA256 = require('crypto-js/hmac-sha256')
-const { removeEmptyValue, buildQueryString, createRequest, defaultLogger } = require('./helpers/utils')
+const { removeEmptyValue, buildQueryString, buildSortedQueryString, substitutePathParams, createRequest, createFuturesRequest, defaultLogger } = require('./helpers/utils')
 
 class APIBase {
   constructor(options) {
@@ -37,7 +36,60 @@ class APIBase {
       url: `${path}?${queryString}&signature=${signature}`,
       apiKey: this.apiKey
     })
-  } 
+  }
+
+  futuresPublicRequest(method, path, params = {}) {
+    const resolved = substitutePathParams(path, removeEmptyValue(params))
+    let url = resolved.path
+    const queryString = buildSortedQueryString(resolved.params)
+    if (queryString !== '') {
+      url = `${url}?${queryString}`
+    }
+    return createFuturesRequest({
+      method,
+      baseURL: this.baseURL,
+      url
+    })
+  }
+
+  futuresSignRequest(method, path, params = {}) {
+    const timestamp = Date.now().toString()
+    if (method === 'POST') {
+      const body = Object.keys(params).length ? JSON.stringify(params) : ''
+      const signTarget = `${this.apiKey}${timestamp}${body}`
+      const signature = CryptoJS.enc.Hex.stringify(CryptoJS.HmacSHA256(signTarget, this.apiSecret))
+      return createFuturesRequest({
+        method,
+        baseURL: this.baseURL,
+        url: path,
+        data: body || undefined,
+        headers: {
+          ApiKey: this.apiKey,
+          'Request-Time': timestamp,
+          Signature: signature
+        }
+      })
+    }
+
+    const resolved = substitutePathParams(path, removeEmptyValue(params))
+    let url = resolved.path
+    const queryString = buildSortedQueryString(resolved.params)
+    const signTarget = `${this.apiKey}${timestamp}${queryString}`
+    const signature = CryptoJS.enc.Hex.stringify(CryptoJS.HmacSHA256(signTarget, this.apiSecret))
+    if (queryString !== '') {
+      url = `${url}?${queryString}`
+    }
+    return createFuturesRequest({
+      method,
+      baseURL: this.baseURL,
+      url,
+      headers: {
+        ApiKey: this.apiKey,
+        'Request-Time': timestamp,
+        Signature: signature
+      }
+    })
+  }
 }
 
 module.exports = APIBase

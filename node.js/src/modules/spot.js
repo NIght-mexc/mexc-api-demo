@@ -1,4 +1,3 @@
-const { validateRequiredParameters } = require('../helpers/validation')
 const Spot = superclass => class extends superclass {
 
   /**
@@ -6,7 +5,7 @@ const Spot = superclass => class extends superclass {
    */
   //*行情接口*//
   //测试服务的连通性
-  TestConnectivity() {
+  Ping() {
     return this.publicRequest('GET', '/api/v3/ping')
   }
 
@@ -85,6 +84,16 @@ const Spot = superclass => class extends superclass {
     return this.publicRequest('GET', '/api/v3/ticker/bookTicker')
   }
 
+  //查询已下线交易对
+  QueryOfflineSymbols(options = {}) {
+    return this.publicRequest('GET', '/api/v3/symbol/offline', options)
+  }
+
+  //获取公告
+  GetAnnouncements(options = {}) {
+    return this.publicRequest('GET', '/api/v3/announcements', options)
+  }
+
   //*现货账户和交易接口*//
   //查询账户KYC状态
   KycStatus(options = {}) {
@@ -93,6 +102,16 @@ const Spot = superclass => class extends superclass {
       '/api/v3/kyc/status',
       options
     )
+  }
+
+  //查询UID
+  QueryUid(options = {}) {
+    return this.signRequest('GET', '/api/v3/uid', options)
+  }
+
+  //API Key信息
+  ApiKeyInfo(options = {}) {
+    return this.signRequest('POST', '/api/v3/apiKeyInfo', options)
   }
 
   //用户API交易对
@@ -105,7 +124,7 @@ const Spot = superclass => class extends superclass {
   }
 
   //测试下单
-  TestConnectivity(options = {}) {
+  TestOrder(options = {}) {
     return this.signRequest(
       'POST',
       '/api/v3/order/test',
@@ -145,6 +164,15 @@ const Spot = superclass => class extends superclass {
     return this.signRequest(
       'DELETE',
       '/api/v3/openOrders',
+      options
+    )
+  }
+
+  //撤销所有订单
+  CancelAllOrders(options = {}) {
+    return this.signRequest(
+      'DELETE',
+      '/api/v3/order/all',
       options
     )
   }
@@ -199,16 +227,16 @@ const Spot = superclass => class extends superclass {
   MxDeduct(options = {}) {
     return this.signRequest(
       'POST',
-      'api/v3/mxDeduct/enable',
+      '/api/v3/mxDeduct/enable',
       options
     )
   }
 
   //查看MX抵扣状态
-  MxDeducth(options = {}) {
+  QueryMxDeduct(options = {}) {
     return this.signRequest(
       'GET',
-      'api/v3/mxDeduct/enableh',
+      '/api/v3/mxDeduct/enable',
       options
     )
   }
@@ -217,9 +245,34 @@ const Spot = superclass => class extends superclass {
   TradeFee(options = {}) {
     return this.signRequest(
       'GET',
-      'api/v3/tradeFee',
+      '/api/v3/tradeFee',
       options
     )
+  }
+
+  //创建STP策略组
+  CreateStpGroup(options = {}) {
+    return this.signRequest('POST', '/api/v3/strategy/group', options)
+  }
+
+  //查询STP策略组
+  QueryStpGroup(options = {}) {
+    return this.signRequest('GET', '/api/v3/strategy/group', options)
+  }
+
+  //删除STP策略组
+  DeleteStpGroup(options = {}) {
+    return this.signRequest('DELETE', '/api/v3/strategy/group', options)
+  }
+
+  //添加UID到STP策略组
+  AddUidToStpGroup(options = {}) {
+    return this.signRequest('POST', '/api/v3/strategy/group/uid', options)
+  }
+
+  //从STP策略组删除UID
+  DeleteUidFromStpGroup(options = {}) {
+    return this.signRequest('DELETE', '/api/v3/strategy/group/uid', options)
   }
 
   //*母子账户接口*//
@@ -278,7 +331,7 @@ const Spot = superclass => class extends superclass {
   }
 
   //查询母子万向划转历史
-  TransferHistory(options = {}) {
+  SubAccountTransferHistory(options = {}) {
     return this.signRequest(
       'GET',
       '/api/v3/capital/sub-account/universalTransfer',
@@ -286,7 +339,7 @@ const Spot = superclass => class extends superclass {
     )
   }
 
-  //查询子账户的APIkey
+  //查询子账户资产
   GetAsset(options = {}) {
     return this.signRequest(
       'GET',
@@ -310,6 +363,15 @@ const Spot = superclass => class extends superclass {
     return this.signRequest(
       'POST',
       '/api/v3/capital/withdraw',
+      options
+    )
+  }
+
+  //提币(旧接口,即将下线)
+  WithdrawApply(options = {}) {
+    return this.signRequest(
+      'POST',
+      '/api/v3/capital/withdraw/apply',
       options
     )
   }
@@ -521,11 +583,38 @@ const Spot = superclass => class extends superclass {
     )
   }
 
+  // 获取代理活动数据（代理账户）
+  AffiliateCampaign(options = {}) {
+    return this.signRequest(
+      'GET',
+      '/api/v3/rebate/affiliate/campaign',
+      options
+    )
+  }
+
+  // 获取直属子代理数据（代理账户）
+  AffiliateList(options = {}) {
+    return this.signRequest(
+      'GET',
+      '/api/v3/rebate/affiliate/list',
+      options
+    )
+  }
+
   //*Websocket*//
   //创建listenkey
   CreateListenKey(options = {}) {
     return this.signRequest(
       'POST',
+      '/api/v3/userDataStream',
+      options
+    )
+  }
+
+  //查询有效listenkey
+  QueryListenKeys(options = {}) {
+    return this.signRequest(
+      'GET',
       '/api/v3/userDataStream',
       options
     )

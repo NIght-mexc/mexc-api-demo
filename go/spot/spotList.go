@@ -118,6 +118,26 @@ func BookTicker(jsonParams string) interface{} {
 	return response
 }
 
+// ### 13 查询已下线交易对 Query Offline Symbols
+func QueryOfflineSymbols(jsonParams string) interface{} {
+	caseUrl := "/symbol/offline"
+	requestUrl := config.BASE_URL + caseUrl
+	fmt.Println("requestUrl:", requestUrl)
+	response := utils.PublicGet(requestUrl, jsonParams)
+	return response
+}
+
+// ## MEXC Platform
+
+// ### 1 获取公告 Get Announcements
+func GetAnnouncements(jsonParams string) interface{} {
+	caseUrl := "/announcements"
+	requestUrl := config.BASE_URL + caseUrl
+	fmt.Println("requestUrl:", requestUrl)
+	response := utils.PublicGet(requestUrl, jsonParams)
+	return response
+}
+
 // ## 母子账户接口 Sub-Account Endpoints
 
 // ### 1 创建子账户 Create a Sub-account(For Master Account)
@@ -183,6 +203,98 @@ func QueryUniTransfer(jsonParams string) interface{} {
 	return response
 }
 
+// ### 8 查询子账户资产 Query Sub-account Asset
+func QuerySubAsset(jsonParams string) interface{} {
+	caseUrl := "/sub-account/asset"
+	requestUrl := config.BASE_URL + caseUrl
+	fmt.Println("requestUrl:", requestUrl)
+	response := utils.PrivateGet(requestUrl, jsonParams)
+	return response
+}
+
+// ## 账户接口 Account Endpoints
+
+// ### 1 查询KYC状态 Query KYC Status
+func KycStatus(jsonParams string) interface{} {
+	caseUrl := "/kyc/status"
+	requestUrl := config.BASE_URL + caseUrl
+	fmt.Println("requestUrl:", requestUrl)
+	response := utils.PrivateGet(requestUrl, jsonParams)
+	return response
+}
+
+// ### 2 查询UID Query UID
+func QueryUid(jsonParams string) interface{} {
+	caseUrl := "/uid"
+	requestUrl := config.BASE_URL + caseUrl
+	fmt.Println("requestUrl:", requestUrl)
+	response := utils.PrivateGet(requestUrl, jsonParams)
+	return response
+}
+
+// ### 3 API Key信息 API Key Info
+func ApiKeyInfo(jsonParams string) interface{} {
+	caseUrl := "/apiKeyInfo"
+	requestUrl := config.BASE_URL + caseUrl
+	fmt.Println("requestUrl:", requestUrl)
+	response := utils.PrivatePost(requestUrl, jsonParams)
+	return response
+}
+
+// ### 4 查询手续费 Query Symbol Commission
+func TradeFee(jsonParams string) interface{} {
+	caseUrl := "/tradeFee"
+	requestUrl := config.BASE_URL + caseUrl
+	fmt.Println("requestUrl:", requestUrl)
+	response := utils.PrivateGet(requestUrl, jsonParams)
+	return response
+}
+
+// ### 5 创建STP策略组 Create STP Strategy Group
+func CreateStpGroup(jsonParams string) interface{} {
+	caseUrl := "/strategy/group"
+	requestUrl := config.BASE_URL + caseUrl
+	fmt.Println("requestUrl:", requestUrl)
+	response := utils.PrivatePost(requestUrl, jsonParams)
+	return response
+}
+
+// ### 6 查询STP策略组 Query STP Strategy Group
+func QueryStpGroup(jsonParams string) interface{} {
+	caseUrl := "/strategy/group"
+	requestUrl := config.BASE_URL + caseUrl
+	fmt.Println("requestUrl:", requestUrl)
+	response := utils.PrivateGet(requestUrl, jsonParams)
+	return response
+}
+
+// ### 7 删除STP策略组 Delete STP Strategy Group
+func DeleteStpGroup(jsonParams string) interface{} {
+	caseUrl := "/strategy/group"
+	requestUrl := config.BASE_URL + caseUrl
+	fmt.Println("requestUrl:", requestUrl)
+	response := utils.PrivateDelete(requestUrl, jsonParams)
+	return response
+}
+
+// ### 8 添加UID到STP策略组 Add UID to STP Strategy Group
+func AddUidToStpGroup(jsonParams string) interface{} {
+	caseUrl := "/strategy/group/uid"
+	requestUrl := config.BASE_URL + caseUrl
+	fmt.Println("requestUrl:", requestUrl)
+	response := utils.PrivatePost(requestUrl, jsonParams)
+	return response
+}
+
+// ### 9 从STP策略组删除UID Delete UID from STP Strategy Group
+func DeleteUidFromStpGroup(jsonParams string) interface{} {
+	caseUrl := "/strategy/group/uid"
+	requestUrl := config.BASE_URL + caseUrl
+	fmt.Println("requestUrl:", requestUrl)
+	response := utils.PrivateDelete(requestUrl, jsonParams)
+	return response
+}
+
 // ## 现货账户和交易接口 Spot Account and Trade
 
 // ### 1 用户API交易对 User API default symbol
@@ -233,6 +345,15 @@ func CancelOrder(jsonParams string) interface{} {
 // ### 6 撤销单一交易对所有订单 Cancel all Open Orders on a Symbol
 func CancelAllOrders(jsonParams string) interface{} {
 	caseUrl := "/openOrders"
+	requestUrl := config.BASE_URL + caseUrl
+	fmt.Println("requestUrl:", requestUrl)
+	response := utils.PrivateDelete(requestUrl, jsonParams)
+	return response
+}
+
+// ### 6.1 撤销所有订单 Cancel All Orders
+func CancelAllOrdersAll(jsonParams string) interface{} {
+	caseUrl := "/order/all"
 	requestUrl := config.BASE_URL + caseUrl
 	fmt.Println("requestUrl:", requestUrl)
 	response := utils.PrivateDelete(requestUrl, jsonParams)
@@ -313,8 +434,17 @@ func QueryCurrencyInfo(jsonParams string) interface{} {
 	return response
 }
 
-// ### 2 提币 Withdraw
+// ### 2 提币 Withdraw(new)
 func Withdraw(jsonParams string) interface{} {
+	caseUrl := "/capital/withdraw"
+	requestUrl := config.BASE_URL + caseUrl
+	fmt.Println("requestUrl:", requestUrl)
+	response := utils.PrivatePost(requestUrl, jsonParams)
+	return response
+}
+
+// ### 2.1 提币(旧接口,即将下线) Withdraw(previous)
+func WithdrawApply(jsonParams string) interface{} {
 	caseUrl := "/capital/withdraw/apply"
 	requestUrl := config.BASE_URL + caseUrl
 	fmt.Println("requestUrl:", requestUrl)
@@ -342,7 +472,7 @@ func DepositHistory(jsonParams string) interface{} {
 
 // ### 5 获取提币历史 Withdraw History
 func WithdrawHistory(jsonParams string) interface{} {
-	caseUrl := "/capital/withdraw/historyl"
+	caseUrl := "/capital/withdraw/history"
 	requestUrl := config.BASE_URL + caseUrl
 	fmt.Println("requestUrl:", requestUrl)
 	response := utils.PrivateGet(requestUrl, jsonParams)
@@ -430,16 +560,7 @@ func ConvertHistory(jsonParams string) interface{} {
 	return response
 }
 
-// ### 15 获取ETF基础信息 Get ETF info
-func ETFInfo(jsonParams string) interface{} {
-	caseUrl := "/etf/info"
-	requestUrl := config.BASE_URL + caseUrl
-	fmt.Println("requestUrl:", requestUrl)
-	response := utils.PrivateGet(requestUrl, jsonParams)
-	return response
-}
-
-// ### 16 用户站内转账 Internal Transfer
+// ### 15 用户站内转账 Internal Transfer
 func InternalTransfer(jsonParams string) interface{} {
 	caseUrl := "/capital/transfer/internal"
 	requestUrl := config.BASE_URL + caseUrl
@@ -465,6 +586,15 @@ func CreateListenKey(jsonParams string) interface{} {
 	requestUrl := config.BASE_URL + caseUrl
 	fmt.Println("requestUrl:", requestUrl)
 	response := utils.PrivatePost(requestUrl, jsonParams)
+	return response
+}
+
+// ### 1.1 查询有效 Listen Key  Query Valid Listen Keys
+func QueryListenKeys(jsonParams string) interface{} {
+	caseUrl := "/userDataStream"
+	requestUrl := config.BASE_URL + caseUrl
+	fmt.Println("requestUrl:", requestUrl)
+	response := utils.PrivateGet(requestUrl, jsonParams)
 	return response
 }
 
@@ -563,6 +693,24 @@ func AffiliateReferral(jsonParams string) interface{} {
 // ### 9 查询子代理页面数据 （代理账户）Get Subaffiliates Data (affiliate only)
 func Subaffiliates(jsonParams string) interface{} {
 	caseUrl := "/rebate/affiliate/subaffiliates"
+	requestUrl := config.BASE_URL + caseUrl
+	fmt.Println("requestUrl:", requestUrl)
+	response := utils.PrivateGet(requestUrl, jsonParams)
+	return response
+}
+
+// ### 10 获取代理活动数据 （代理账户）Get Affiliate Campaign Data (affiliate only)
+func AffiliateCampaign(jsonParams string) interface{} {
+	caseUrl := "/rebate/affiliate/campaign"
+	requestUrl := config.BASE_URL + caseUrl
+	fmt.Println("requestUrl:", requestUrl)
+	response := utils.PrivateGet(requestUrl, jsonParams)
+	return response
+}
+
+// ### 11 获取直属子代理数据 （代理账户）Get Direct Subaffiliate Data (affiliate only)
+func AffiliateList(jsonParams string) interface{} {
+	caseUrl := "/rebate/affiliate/list"
 	requestUrl := config.BASE_URL + caseUrl
 	fmt.Println("requestUrl:", requestUrl)
 	response := utils.PrivateGet(requestUrl, jsonParams)

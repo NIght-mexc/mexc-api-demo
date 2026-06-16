@@ -8,70 +8,82 @@ npm install
 
 ## RESTful APIs
 
+### Spot
 ```javascript
-const Spot = require('../src/spot')
+const { Spot } = require('./src')
 const apiKey = ''
 const apiSecret = ''
 const client = new Spot(apiKey, apiSecret, { baseURL: 'https://api.mexc.com' })
 
-
-client.CancelWithdraw().then(response => client.logger.log(response.data))
+client.Ping().then(response => client.logger.log(response.data))
   .catch(error => client.logger.error(error))
 ```
 
+### Futures
 ```javascript
-const Spot = require('../src/spot')
-const apiKey = ''
-const apiSecret = ''
-const client = new Spot(apiKey, apiSecret, { baseURL: 'https://api.mexc.com' })
+const { Futures } = require('./src')
+const apiKey = ''      // replace with your API key
+const apiSecret = ''   // replace with your API secret
+const client = new Futures(apiKey, apiSecret, { baseURL: 'https://api.mexc.com' })
 
-
-client.AccountInformation().then(response => client.logger.log(response.data))
-  .catch(error => client.logger.error(error))
-
+client.futuresPing().then(response => client.logger.log(response.data))
 ```
 
-Please find `modules` folder to check for more endpoints.
+### Broker
+```javascript
+const { Broker } = require('./src')
+const apiKey = ''      // replace with your API key
+const apiSecret = ''   // replace with your API secret
+const client = new Broker(apiKey, apiSecret, { baseURL: 'https://api.mexc.com' })
 
+client.brokerSubAccountList().then(response => client.logger.log(response.data))
+```
+
+### P2P
+```javascript
+const { P2P } = require('./src')
+const apiKey = ''      // replace with your API key
+const apiSecret = ''   // replace with your API secret
+const client = new P2P(apiKey, apiSecret, { baseURL: 'https://api.mexc.com' })
+
+client.p2POrderDetail({ orderId: '123' }).then(response => client.logger.log(response.data))
+```
+
+Please find `src/modules` folder to check for more endpoints.
 
 ### Base URL
-# Contract
-`https://contract.mexc.com`
-# spot
-`https://api.mexc.com`
+* Spot / Broker / P2P: `https://api.mexc.com`
+* Futures REST: `https://api.mexc.com`
 
 ### Optional Parameters
 
 Optional parameters are encapsulated to a single object as the last function parameter.
 
 ```javascript
-const Spot = require('../../src/spot')
-
-const apiKey = ''
-const apiSecret = ''
-const client = new Spot(apiKey, apiSecret, { baseURL: 'https://api.mexc.com' })
-
-client.AccountInformation().then(response => client.logger.log(response.data)) 
-```
-
-```javascript
-const Spot = require('../../src/spot')
-
+const { Spot } = require('./src')
 const client = new Spot()
-client.Depth({symbol:'BTCUSDT',depth:5}).then(response => client.logger.log(response.data))
-  .catch(error => client.logger.error(error))
-
+client.Depth({ symbol: 'BTCUSDT', limit: 5 }).then(response => client.logger.log(response.data))
 ```
 
 ## Websocket
 ## Environmental requirements
-nodejs 6.0+
+nodejs 12.22.3+
 
 ## Demo Description
-ws.js
-Demo using spot websocket
+`websocket/websocket_proto.js`
+Demo using spot websocket v3 protobuf streams
 
 ## User's Guide
 ```
-node ws.js
+cd websocket
+npm install
+node websocket_proto.js
+```
+
+## Run REST demos
+```
+node run/Market/Ping.js
+node run/Futures/Ping.js
+node run/Broker/QuerySubAccountList.js
+node run/P2P/GetOrderDetail.js
 ```

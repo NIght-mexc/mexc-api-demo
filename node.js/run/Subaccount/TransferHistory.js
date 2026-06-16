@@ -4,5 +4,5 @@ const apiSecret = ''
 const client = new Spot(apiKey, apiSecret, { baseURL: 'https://api.mexc.com' })
 
 
-client.TransferHistory().then(response => client.logger.log(response.data))
+client.SubAccountTransferHistory().then(response => client.logger.log(response.data))
   .catch(error => client.logger.error(error))

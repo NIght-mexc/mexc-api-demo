@@ -1,8 +1,8 @@
 const APIBase = require('./APIbase')
-const { Spot: SpotModule } = require('./modules')
+const { P2P: P2PModule } = require('./modules')
 const { flowRight } = require('./helpers/utils')
 
-class Spot extends flowRight(SpotModule)(APIBase) {
+class P2P extends flowRight(P2PModule)(APIBase) {
   constructor (apiKey = '', apiSecret = '', options = {}) {
     options.baseURL = options.baseURL || 'https://api.mexc.com'
     super({
@@ -13,4 +13,4 @@ class Spot extends flowRight(SpotModule)(APIBase) {
   }
 }
 
-module.exports = Spot
+module.exports = P2P

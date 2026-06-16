@@ -12,7 +12,7 @@ protobuf.load(protoPath, (err, root) => {
   createWebSocket();
 });
 
-const BASE_URL = 'wss://wbs-api.mexc.co/ws';
+const BASE_URL = 'wss://wbs-api.mexc.com/ws';
 
 const subscribeMessage = {
   method: 'SUBSCRIPTION',
