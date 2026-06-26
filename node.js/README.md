@@ -1,132 +1,107 @@
-# Mexc in Nodejs
+# MEXC Node.js SDK
 
-## Installation
+Node.js client libraries for MEXC **Spot**, **Futures**, **P2P**, and **Broker** APIs. Organized as an npm **workspace**: shared `common/` plus independent `clients/*` packages.
 
-```
-npm install 
-```
+This README is the **entry point for the Node tree**. Each client has its own README with install, init, and call examples — integrate the SDK directly; `examples/` are supplementary.
 
-## SDK layout
-
-| Package | Path | Description |
-|---------|------|-------------|
-| Spot SDK | `node.js/spot/` | Spot REST + Broker + P2P + thin Futures helpers |
-| Futures SDK | `node.js/futures/` | Standalone Futures REST + WebSocket SDK (upstream) |
-
-## RESTful APIs
-
-### Spot (`node.js/spot/`)
-
-```javascript
-const Spot = require('./spot/src/spot')
-const apiKey = ''
-const apiSecret = ''
-const client = new Spot(apiKey, apiSecret, { baseURL: 'https://api.mexc.com' })
-
-client.Ping().then(response => client.logger.log(response.data))
-  .catch(error => client.logger.error(error))
-```
-
-```javascript
-const Spot = require('./spot/src/spot')
-const apiKey = ''
-const apiSecret = ''
-const client = new Spot(apiKey, apiSecret, { baseURL: 'https://api.mexc.com' })
-
-client.AccountInformation().then(response => client.logger.log(response.data))
-  .catch(error => client.logger.error(error))
-```
-
-### Futures (`node.js/futures/`)
-
-Use the standalone Futures SDK for contract REST and WebSocket examples:
-
-```javascript
-const { MexcFuturesRestClient } = require('./futures/src')
-const apiKey = ''      // replace with your API key
-const apiSecret = ''   // replace with your API secret
-const client = new MexcFuturesRestClient({ apiKey, apiSecret })
-
-client.ping().then(response => console.log(response))
-  .catch(error => console.error(error))
-```
-
-`spot/src` also exposes a thin Futures mixin (`require('./spot/src').Futures`) for legacy demos; prefer `node.js/futures/` for full Futures coverage.
-
-### Broker (`node.js/spot/`)
-
-```javascript
-const { Broker } = require('./spot/src')
-const apiKey = ''      // replace with your API key
-const apiSecret = ''   // replace with your API secret
-const client = new Broker(apiKey, apiSecret, { baseURL: 'https://api.mexc.com' })
-
-client.brokerSubAccountList().then(response => client.logger.log(response.data))
-```
-
-### P2P (`node.js/spot/`)
-
-```javascript
-const { P2P } = require('./spot/src')
-const apiKey = ''      // replace with your API key
-const apiSecret = ''   // replace with your API secret
-const client = new P2P(apiKey, apiSecret, { baseURL: 'https://api.mexc.com' })
-
-client.p2POrderDetail({ advOrderNo: '123' }).then(response => client.logger.log(response.data))
-```
-
-Please find `spot/src/modules` folder to check for more Spot / Broker / P2P endpoints.
-
-### Base URL
-
-* Spot / Broker / P2P: `https://api.mexc.com`
-* Futures REST: `https://api.mexc.com`
-
-### Optional Parameters
-
-Optional parameters are encapsulated to a single object as the last function parameter.
-
-```javascript
-const Spot = require('./spot/src/spot')
-const client = new Spot()
-client.Depth({ symbol: 'BTCUSDT', limit: 5 }).then(response => client.logger.log(response.data))
-```
-
-## Websocket
-
-### Spot WebSocket (`node.js/spot/websocket/`)
-
-Environmental requirements: nodejs 12.22.3+
-
-Demo: `spot/websocket/websocket_proto.js` — Spot WebSocket v3 protobuf streams.
+## Layout
 
 ```
-cd spot/websocket
+node.js/
+├── common/                 # Shared Spot v3 HTTP + signing (mexc-common)
+├── clients/
+│   ├── spot/               # Spot v3 REST (+ WS protobuf under src/websocket/)
+│   ├── futures/            # Futures REST + WebSocket
+│   ├── p2p/                # P2P REST + chat WebSocket
+│   └── broker/             # Broker REST
+├── package.json            # Workspace root
+└── README.md               # ← you are here
+```
+
+## Installation (this repository)
+
+```bash
+cd node.js
 npm install
-node websocket_proto.js
 ```
 
-### Futures WebSocket (`node.js/futures/`)
+Requires **Node.js 14+**. Packages are linked via workspaces (`mexc-common`, `mexc-spot-sdk`, …).
 
-See `futures/examples/ws-ticker.js`, `ws-depth.js`, `ws-private.js`, or run `node futures/run-ws.js`.
+This monorepo does **not** assume published npm packages. Use `require()` paths as shown below, or workspace package names after `npm install`.
 
-## Run REST demos
+## Usage patterns by client
 
-### Spot / Broker / P2P (`node.js/spot/run/`)
+| Client | Entry class | REST | WebSocket |
+|--------|---------------|------|-----------|
+| Spot | `MexcSpot` | methods on client (`client.ping()`) | demos in `src/websocket/` |
+| Futures | `MexcFutures` | `client.restApi.*` | `client.wsStreams` |
+| P2P | `MexcP2P` | methods on client | `client.createChatWs()` |
+| Broker | `MexcBroker` | methods on client | — |
 
+## Minimal usage (formal API)
+
+### Spot — public
+
+```javascript
+const { MexcSpot } = require('./clients/spot')
+
+const client = new MexcSpot() // no keys for public endpoints
+const { data } = await client.ping()
 ```
-node spot/run/Market/Ping.js
-node spot/run/Broker/QuerySubAccountList.js
-node spot/run/P2P/GetOrderDetail.js
+
+### Spot — private
+
+```javascript
+const client = new MexcSpot({
+  apiKey: process.env.MEXC_API_KEY,
+  apiSecret: process.env.MEXC_API_SECRET
+})
+const { data } = await client.accountInformation()
 ```
 
-### Futures (`node.js/futures/`)
+### Futures — REST + WebSocket
 
+```javascript
+const { MexcFutures } = require('./clients/futures')
+
+const client = new MexcFutures(
+  process.env.MEXC_API_KEY,
+  process.env.MEXC_API_SECRET
+)
+
+await client.restApi.ping()
+client.wsStreams.on('message', (msg) => console.log(msg))
+client.wsStreams.connect()
+client.wsStreams.subTicker({ symbol: 'BTC_USDT' })
 ```
-node futures/run.js
-node futures/examples/rest-public.js
-node futures/examples/rest-private.js
-node futures/examples/ws-ticker.js
-node futures/examples/ws-depth.js
-node futures/examples/ws-private.js
+
+## Where to read next
+
+| Topic | README |
+|-------|--------|
+| All clients | [clients/README.md](clients/README.md) |
+| Spot | [clients/spot/README.md](clients/spot/README.md) |
+| Futures | [clients/futures/README.md](clients/futures/README.md) |
+| P2P | [clients/p2p/README.md](clients/p2p/README.md) |
+| Broker | [clients/broker/README.md](clients/broker/README.md) |
+| Shared HTTP | [common/README.md](common/README.md) |
+
+## Examples (supplementary)
+
+Each `clients/*/examples/` tree is grouped by **English API documentation** sections. Examples use `_lib.js`, optional `.env` (from `.env.example`), and are for verification and interface coverage — **not** required to use the SDK.
+
+```bash
+cd node.js/clients/spot
+cp .env.example .env   # fill keys for private examples
+node examples/MarketData/Ping.js
+npm run example:ping
 ```
+
+See per-client `examples/README.md` for full mappings.
+
+`clients/futures/examples/dev/` — interactive dev runners only; not public API.
+
+## Credentials
+
+- Copy `clients/<name>/.env.example` → `.env` locally (never commit `.env`)
+- Or pass `{ apiKey, apiSecret }` / constructor args in application code
